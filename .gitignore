@@ -206,6 +206,7 @@ jspm_packages/
 
 # MCP specific
 config.json
+mcp.json
 debug.log
 *.mcp.log
 

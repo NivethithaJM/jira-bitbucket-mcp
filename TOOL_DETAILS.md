@@ -401,7 +401,7 @@ Get pull request diff information from a Bitbucket URL.
 **Example:**
 ```json
 {
-  "prUrl": "https://bitbucket.org/ovaledgeinc/oasis_repo/pull-requests/63604"
+  "prUrl": "https://bitbucket.org/your-workspace/your-repo/pull-requests/123"
 }
 ```
 

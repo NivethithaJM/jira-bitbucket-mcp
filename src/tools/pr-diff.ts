@@ -54,6 +54,79 @@ function parseBitbucketPrUrl(url: string): ParsedPrUrl | null {
   }
 }
 
+interface FileChange {
+  file: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+}
+
+function parseRawDiff(diffString: string): FileChange[] {
+  const fileChanges: FileChange[] = [];
+  const lines = diffString.split('\n');
+  
+  let currentFile: FileChange | null = null;
+  let inHunk = false;
+  
+  for (const line of lines) {
+    // Check for file header
+    if (line.startsWith('diff --git')) {
+      // Save previous file if exists
+      if (currentFile) {
+        currentFile.changes = currentFile.additions + currentFile.deletions;
+        fileChanges.push(currentFile);
+      }
+      
+      // Extract filename from diff header
+      const match = line.match(/diff --git a\/(.+) b\/(.+)/);
+      if (match) {
+        const filePath = match[2]; // Use the 'b' path (new file path)
+        currentFile = {
+          file: filePath,
+          status: 'modified',
+          additions: 0,
+          deletions: 0,
+          changes: 0
+        };
+      }
+      inHunk = false;
+    }
+    // Check for new file
+    else if (line.startsWith('new file mode')) {
+      if (currentFile) {
+        currentFile.status = 'added';
+      }
+    }
+    // Check for deleted file
+    else if (line.startsWith('deleted file mode')) {
+      if (currentFile) {
+        currentFile.status = 'deleted';
+      }
+    }
+    // Check for hunk header
+    else if (line.startsWith('@@')) {
+      inHunk = true;
+    }
+    // Count additions and deletions within hunks
+    else if (inHunk && currentFile) {
+      if (line.startsWith('+') && !line.startsWith('+++')) {
+        currentFile.additions++;
+      } else if (line.startsWith('-') && !line.startsWith('---')) {
+        currentFile.deletions++;
+      }
+    }
+  }
+  
+  // Add the last file
+  if (currentFile) {
+    currentFile.changes = currentFile.additions + currentFile.deletions;
+    fileChanges.push(currentFile);
+  }
+  
+  return fileChanges;
+}
+
 export async function getPrDiff(prUrl: string) {
   try {
     // Check if Bitbucket client is available
@@ -81,13 +154,31 @@ export async function getPrDiff(prUrl: string) {
     
     console.log(`Fetching diff for PR ${prId} in ${workspace}/${repository}`);
 
-    // Get the pull request diff using Bitbucket API
-    const response = await bitbucketClient.get(`/repositories/${workspace}/${repository}/pullrequests/${prId}/diff`);
+    // Get PR details first to understand the PR structure
+    console.log(`Getting PR details for ${prId}...`);
+    const prDetailsResponse = await bitbucketClient.get(`/repositories/${workspace}/${repository}/pullrequests/${prId}`);
+    const prDetails = prDetailsResponse.data;
+    
+    if (!prDetails || !prDetails.source || !prDetails.source.commit) {
+      return {
+        table: {
+          headers: ['File', 'Status', 'Additions', 'Deletions', 'Changes'],
+          rows: [['No commit information available', '', '', '', '']]
+        }
+      };
+    }
+    
+    // Get the complete PR diff between source and target branches (includes all commits in the PR)
+    const sourceCommit = prDetails.source.commit.hash;
+    const targetCommit = prDetails.destination.commit.hash;
+    
+    console.log(`Getting complete PR diff from ${sourceCommit}..${targetCommit} (includes all commits)`);
+    const response = await bitbucketClient.get(`/repositories/${workspace}/${repository}/diff/${sourceCommit}..${targetCommit}`);
 
-    // Parse the diff data
+    // Parse the diff data - Bitbucket returns raw diff string
     const diffData = response.data;
     
-    if (!diffData || !Array.isArray(diffData)) {
+    if (!diffData || typeof diffData !== 'string') {
       return {
         table: {
           headers: ['File', 'Status', 'Additions', 'Deletions', 'Changes'],
@@ -96,43 +187,17 @@ export async function getPrDiff(prUrl: string) {
       };
     }
 
-    // Process diff data and extract file information
-    const fileChanges: any[] = [];
+    // Parse the raw diff string
+    const fileChanges = parseRawDiff(diffData);
     
-    diffData.forEach((fileDiff: any) => {
-      if (fileDiff && fileDiff.new && fileDiff.new.path) {
-        const fileName = fileDiff.new.path;
-        const status = fileDiff.status || 'modified';
-        
-        // Count additions and deletions
-        let additions = 0;
-        let deletions = 0;
-        
-        if (fileDiff.hunks && Array.isArray(fileDiff.hunks)) {
-          fileDiff.hunks.forEach((hunk: any) => {
-            if (hunk.segments && Array.isArray(hunk.segments)) {
-              hunk.segments.forEach((segment: any) => {
-                if (segment.type === 'added') {
-                  additions += segment.lines ? segment.lines.length : 0;
-                } else if (segment.type === 'removed') {
-                  deletions += segment.lines ? segment.lines.length : 0;
-                }
-              });
-            }
-          });
+    if (fileChanges.length === 0) {
+      return {
+        table: {
+          headers: ['File', 'Status', 'Additions', 'Deletions', 'Changes'],
+          rows: [['No file changes detected', '', '', '', '']]
         }
-        
-        const totalChanges = additions + deletions;
-        
-        fileChanges.push({
-          file: fileName,
-          status: status,
-          additions: additions,
-          deletions: deletions,
-          changes: totalChanges
-        });
-      }
-    });
+      };
+    }
 
     // Sort by total changes (most changes first)
     const sortedChanges = fileChanges.sort((a, b) => b.changes - a.changes);
@@ -174,6 +239,8 @@ export async function getPrDiff(prUrl: string) {
         workspace: workspace,
         repository: repository,
         prId: prId,
+        sourceBranch: prDetails.source?.branch?.name || 'unknown',
+        targetBranch: prDetails.destination?.branch?.name || 'unknown',
         totalFiles: totalFiles,
         totalAdditions: totalAdditions,
         totalDeletions: totalDeletions,

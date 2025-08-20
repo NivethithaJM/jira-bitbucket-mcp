@@ -140,23 +140,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 
       case 'get_pull_requests_for_issue':
-        const prData = await getPullRequestsForIssue(args.issueKey as string);
         return {
           content: [
             {
-              type: 'table',
-              table: prData.table,
+              type: 'text',
+              text: JSON.stringify(await getPullRequestsForIssue(args.issueKey as string), null, 2),
             },
           ],
         };
 
       case 'get_pr_diff':
-        const diffData = await getPrDiff(args.prUrl as string);
         return {
           content: [
             {
-              type: 'table',
-              table: diffData.table,
+              type: 'text',
+              text: JSON.stringify(await getPrDiff(args.prUrl as string), null, 2),
             },
           ],
         };

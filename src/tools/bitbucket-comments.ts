@@ -141,10 +141,10 @@ export async function addBitbucketComment(prUrl: string, comment: string) {
     const processedComment = isMarkdown(fullComment) ? convertMarkdownToHtml(fullComment) : fullComment;
     
     // Prepare the comment payload for Bitbucket API
+    // Bitbucket API expects content.raw structure
     const commentPayload = {
       content: {
-        raw: fullComment, // Use raw text for Bitbucket
-        markup: isMarkdown(fullComment) ? 'markdown' : 'plaintext'
+        raw: fullComment
       }
     };
     
