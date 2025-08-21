@@ -192,59 +192,7 @@ Run the installation script to generate the configuration, or manually create an
 
 
 
-## 🚀 Enhanced Field Type Support
 
-The MCP server now provides **comprehensive field type support** for updating Jira issues with intelligent formatting and validation.
-
-### **Supported Field Types**
-
-- **Standard Jira Fields**: summary, description, priority, assignee, status, labels, components, fixVersions
-- **Text Fields**: text field, text area, read-only field
-- **Numeric Fields**: number, float
-- **Date/Time Fields**: date picker, datetime
-- **Reference Fields**: user picker, group picker, project, version, URL
-- **Selection Fields**: dropdown, radio buttons, multi-select, checkboxes, cascading select, labels
-
-### **Smart Features**
-
-- **Automatic Field Detection**: Identifies field types from Jira metadata
-- **Intelligent Formatting**: Applies correct API format for each field type
-- **Dropdown Validation**: Validates dropdown values against available options
-- **Non-Custom Field Handling**: Automatically converts non-custom fields to comments
-- **Flexible Input**: Accepts various input formats (string, array, object)
-
-### **Usage Examples**
-
-```javascript
-// Standard fields
-await enhancedJiraUpdate({
-  issueKey: 'PROJ-123',
-  summary: 'Updated summary',
-  priority: 'High',
-  labels: ['urgent', 'bug']
-});
-
-// Custom fields by name
-await enhancedJiraUpdate({
-  issueKey: 'PROJ-123',
-  customFieldsByName: {
-    'DEV - Has Impact & Change been Unit tested?': 'Yes',
-    'Functional Review Comments': 'Review completed'
-  }
-});
-
-// Mixed approach with dry run
-await enhancedJiraUpdate({
-  issueKey: 'PROJ-123',
-  dryRun: true,
-  summary: 'Test summary',
-  customFields: {
-    'customfield_10001': 42
-  }
-});
-```
-
-📖 **For detailed documentation, see [COMPREHENSIVE_FIELD_TYPE_SUPPORT.md](COMPREHENSIVE_FIELD_TYPE_SUPPORT.md)**
 
 ## Available Tools
 
@@ -253,7 +201,10 @@ await enhancedJiraUpdate({
 **For Pull Request Queries:**
 - **Primary Tool**: `get_pull_requests_for_issue` - Use this for all PR-related queries
 - **Why**: Uses Jira's integrated dev-status API, more reliable, better error handling
-- **Removed**: Bitbucket API-based tools to avoid authentication issues and redundancy
+
+**For Issue Updates:**
+- **Primary Tool**: `enhanced_jira_update` - Use this for all issue updates
+- **Why**: Comprehensive field type support, intelligent formatting, smart field detection
 
 **For Issue Management:**
 - **Primary Tool**: `get_issue` - Get basic issue details
@@ -265,57 +216,52 @@ await enhancedJiraUpdate({
 1. `search_issues` - Search issues using JQL
 2. `get_issue` - Get detailed issue information
 3. `summarize_jira_ticket` - Comprehensive ticket analysis
-4. `update_issue` - Update existing issues
-5. `add_comment` - Add comments to issues (with markdown support)
-6. `update_issue_fields` - Update specific issue fields
+4. `add_comment` - Add comments to issues (with markdown support)
+
+**Enhanced Update Function:**
+5. `enhanced_jira_update` - ⭐ **PRIMARY: Comprehensive update function with field type support**
 
 **Pull Request Tools:**
-7. `get_bitbucket_repositories` - List Bitbucket repositories (with caching)
-8. `get_pull_requests_for_issue` - ⭐ **PRIMARY: Get PRs for Jira issues**
-9. `get_pr_diff` - Get PR diff information from Bitbucket URL
-10. `add_bitbucket_comment` - Add comments to Bitbucket pull requests
+6. `get_bitbucket_repositories` - List Bitbucket repositories (with caching)
+7. `get_pull_requests_for_issue` - ⭐ **PRIMARY: Get PRs for Jira issues**
+8. `get_pr_diff` - Get PR diff information from Bitbucket URL
+9. `add_bitbucket_comment` - Add comments to Bitbucket pull requests
 
 **Cache Management:**
-11. `reset_mcp_server_cache` - Reset MCP server cache (clear all caches and get statistics)
+10. `reset_mcp_server_cache` - Reset MCP server cache (clear all caches and get statistics)
 
 **Custom Field Management:**
-12. `get_custom_field_mappings` - Get all custom field mappings with caching
-13. `get_custom_field_by_name` - Find a custom field by name (case-insensitive search)
-14. `get_custom_field_by_id` - Get custom field information by its ID
-15. `list_custom_fields` - List all custom fields with their names and types
-16. `clear_custom_field_cache` - Clear the custom field mapping cache
+11. `get_custom_field_mappings` - Get all custom field mappings with caching
+12. `get_custom_field_by_name` - Find a custom field by name (case-insensitive search)
+13. `get_custom_field_by_id` - Get custom field information by its ID
+14. `list_custom_fields` - List all custom fields with their names and types
+15. `clear_custom_field_cache` - Clear the custom field mapping cache
 
-**Unified Update Function (NEW):**
-17. `unified_jira_update` - Comprehensive update function that combines all update methods with dropdown validation
+**Connection Testing:**
+16. `test_bitbucket_connection` - Test Bitbucket API connection and list repositories
 
-**Dropdown Field Management:**
-18. `get_dropdown_field_options` - Get available options for a dropdown custom field
-19. `validate_dropdown_value` - Validate if a value is valid for a dropdown field
-20. `update_dropdown_field` - Update a dropdown custom field with proper validation
-21. `get_field_info` - Get detailed information about a custom field including type and options
+**Total Tools: 16**
 
-**Total Tools: 21**
+## Enhanced Jira Update Function
 
-## Unified Update Function
-
-The `unified_jira_update` function provides a comprehensive way to update Jira issues with enhanced features:
+The `enhanced_jira_update` function provides comprehensive field type support for updating Jira issues with intelligent formatting and validation.
 
 ### Key Features:
-- **Multiple Update Methods**: Combines standard field updates, custom field updates by ID, and custom field updates by name
-- **Dropdown Validation**: Automatically validates dropdown field values and provides suggestions
-- **Smart Field Resolution**: Resolves custom field names to IDs automatically
-- **Comprehensive Documentation**: Adds detailed comments documenting all changes
-- **Error Handling**: Provides clear error messages with suggestions for invalid values
+- **Universal Field Support**: Handles all Jira field types automatically
+- **Intelligent Formatting**: Applies correct API format for each field type
+- **Smart Field Detection**: Identifies field types from Jira metadata
+- **Dropdown Validation**: Validates dropdown values against available options
+- **Non-Custom Field Handling**: Automatically converts non-custom fields to comments
+- **Dry Run Support**: Test field formatting without making changes
+- **Partial Updates**: Continue with valid fields even if some fail
 
 ### Usage Examples:
 
 ```json
 {
   "issueKey": "NFD-38469",
-  "fields": {
-    "summary": "Updated summary",
-    "priority": "High"
-  },
+  "summary": "Updated summary",
+  "priority": "High",
   "customFields": {
     "customfield_10405": "N/A"
   },
@@ -323,17 +269,23 @@ The `unified_jira_update` function provides a comprehensive way to update Jira i
     "DEV - Has Impact & Change been Unit tested?": "N/A"
   },
   "validateDropdowns": true,
-  "addComment": true
+  "addComment": true,
+  "dryRun": false
 }
 ```
 
 ### Parameters:
 - `issueKey` (required): The Jira issue key
-- `fields` (optional): Standard Jira fields (summary, description, priority, etc.)
+- `summary`, `description`, `priority`, `assignee`, `status`, `labels`, `components`, `fixVersions` (optional): Direct standard field parameters
+- `fields` (optional): Legacy standard Jira fields object
 - `customFields` (optional): Custom fields by field ID
 - `customFieldsByName` (optional): Custom fields by field name (automatically resolved to IDs)
 - `validateDropdowns` (optional, default: true): Validate dropdown values
 - `addComment` (optional, default: true): Add documentation comment
+- `dryRun` (optional, default: false): Test formatting without making updates
+- `allowPartialUpdates` (optional, default: false): Continue with valid fields if some fail
+
+📖 **For comprehensive implementation details and field type mappings, see [COMPREHENSIVE_FIELD_TYPE_SUPPORT.md](COMPREHENSIVE_FIELD_TYPE_SUPPORT.md)**
 
 ## Enhanced Custom Field Cache
 
