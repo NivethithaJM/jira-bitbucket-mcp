@@ -80,10 +80,6 @@ export async function getBitbucketRepositoriesCached(maxResults: number = 50): P
 
   // Cache miss or expired - fetch from API
   console.log(`Repository cache miss for workspace ${BITBUCKET_WORKSPACE}, fetching from API`);
-  
-  if (!bitbucketClient) {
-    throw new Error('Bitbucket is not configured. Please set BITBUCKET_WORKSPACE and BITBUCKET_API_KEY.');
-  }
 
   try {
     const response = await bitbucketClient.get(`/repositories/${BITBUCKET_WORKSPACE}`, {

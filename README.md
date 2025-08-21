@@ -24,16 +24,31 @@ A Model Context Protocol (MCP) server that provides tools for interacting with J
 
 ## Setup
 
-1. **Install dependencies:**
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/NivethithaJM/jira-bitbucket-mcp.git
+   cd jira-bitbucket-mcp
+   ```
+
+2. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. **Generate Jira API Token:**
+2. **Generate API Tokens:**
    - Go to [Atlassian Account Settings](https://id.atlassian.com/manage-profile/security/api-tokens)
-   - Click "Create API token"
-   - Give it a name and copy the token
-   - Use this token as `JIRA_API_TOKEN` in your MCP configuration
+   - **For Jira**: Click "Create API token"
+     - Name: "Jira MCP Server"
+     - Expires: 1 year
+     - App: Jira
+     - Scopes: All scopes except delete actions
+     - Generate and copy the token as `JIRA_API_TOKEN`
+   - **For Bitbucket**: Click "Create API token" again
+     - Name: "Bitbucket MCP Server"
+     - Expires: 1 year  
+     - App: Bitbucket
+     - Scopes: All scopes except delete actions
+     - Generate and copy the token as `BITBUCKET_API_KEY`
 
 3. **Build the project:**
    ```bash
@@ -52,12 +67,10 @@ The Model Context Protocol (MCP) is a standard for connecting AI assistants to e
 
 Environment variables are configured directly in the MCP configuration within Cursor IDE. No separate `.env` file is needed.
 
-**Required for Jira:**
+**Required Environment Variables:**
 - `JIRA_BASE_URL` - Your Jira Cloud instance URL
 - `JIRA_EMAIL` - Your Jira Cloud email address  
 - `JIRA_API_TOKEN` - Your Jira Cloud API token
-
-**Optional for Bitbucket:**
 - `BITBUCKET_WORKSPACE` - Your Bitbucket workspace name
 - `BITBUCKET_API_KEY` - Your Bitbucket API key
 
@@ -68,7 +81,7 @@ Create an `mcp.json` file in your project root or user directory:
 ```json
 {
   "mcpServers": {
-    "jira": {
+    "jira-bitbucket-mcp": {
       "command": "node",
       "args": ["/absolute/path/to/your/mcp/dist/index.js"],
       "env": {
@@ -114,7 +127,7 @@ Create an `mcp.json` file in your project root or user directory:
 5. **Test the Connection:**
    - Open a chat with your AI assistant in Cursor
    - Try asking: "Search for Jira issues in project PROJ"
-   - The assistant should be able to use the Jira tools
+   - The assistant should be able to use the Jira and Bitbucket tools
 
 ### Security Considerations
 

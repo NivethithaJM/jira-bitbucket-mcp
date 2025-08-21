@@ -118,10 +118,6 @@ function isMarkdown(text: string): boolean {
 
 export async function addBitbucketComment(prUrl: string, comment: string) {
   try {
-    // Check if Bitbucket client is available
-    if (!bitbucketClient) {
-      throw new Error('Bitbucket API not configured. Please set BITBUCKET_WORKSPACE and BITBUCKET_API_KEY environment variables.');
-    }
 
     // Parse the Bitbucket URL
     const parsedUrl = parseBitbucketPrUrl(prUrl);

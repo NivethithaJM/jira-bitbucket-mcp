@@ -17,9 +17,9 @@ if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
   process.exit(1);
 }
 
-// Bitbucket is optional - only require if workspace is provided
-if (BITBUCKET_WORKSPACE && !BITBUCKET_API_KEY) {
-  console.error('BITBUCKET_WORKSPACE provided but BITBUCKET_API_KEY is missing');
+// Bitbucket credentials are now mandatory
+if (!BITBUCKET_WORKSPACE || !BITBUCKET_API_KEY) {
+  console.error('Missing required Bitbucket environment variables: BITBUCKET_WORKSPACE, BITBUCKET_API_KEY');
   process.exit(1);
 }
 
@@ -36,8 +36,8 @@ export const jiraClient = axios.create({
   },
 });
 
-// Create axios instance for Bitbucket API (if configured)
-export const bitbucketClient = BITBUCKET_WORKSPACE && BITBUCKET_API_KEY ? axios.create({
+// Create axios instance for Bitbucket API
+export const bitbucketClient = axios.create({
   baseURL: 'https://api.bitbucket.org/2.0',
   auth: {
     username: JIRA_EMAIL, // Use the same Atlassian account email
@@ -47,4 +47,4 @@ export const bitbucketClient = BITBUCKET_WORKSPACE && BITBUCKET_API_KEY ? axios.
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-}) : null;
+});

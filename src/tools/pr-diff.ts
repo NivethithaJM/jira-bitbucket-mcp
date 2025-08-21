@@ -129,15 +129,6 @@ function parseRawDiff(diffString: string): FileChange[] {
 
 export async function getPrDiff(prUrl: string) {
   try {
-    // Check if Bitbucket client is available
-    if (!bitbucketClient) {
-      return {
-        table: {
-          headers: ['File', 'Status', 'Additions', 'Deletions', 'Changes'],
-          rows: [['Error: Bitbucket API not configured. Please set BITBUCKET_WORKSPACE and BITBUCKET_API_KEY environment variables.', '', '', '', '']]
-        }
-      };
-    }
 
     // Parse the Bitbucket URL
     const parsedUrl = parseBitbucketPrUrl(prUrl);
