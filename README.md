@@ -41,6 +41,24 @@ cd jira-bitbucket-mcp
 install.bat
 ```
 
+**Note**: The installation scripts will generate the MCP configuration and display it in the console. You'll need to copy and paste this configuration into your `mcp.json` file at your desired location.
+
+### 🔄 Updating the MCP Server
+
+To update the MCP server to the latest version:
+
+```bash
+./update_and_restart.sh
+```
+
+This script will:
+- Pull the latest changes from git
+- Install any new dependencies
+- Rebuild the project
+- Stop any running MCP servers
+- Start a new MCP server
+- Ask you to restart your IDE
+
 ### 📋 Manual Setup
 
 1. **Clone the repository:**
@@ -74,6 +92,25 @@ install.bat
    npm run build
    ```
 
+## 🔄 Updating the MCP Server
+
+To update to the latest version and restart the server:
+
+```bash
+./update_and_restart.sh
+```
+
+This script will automatically:
+- ✅ Pull the latest changes from git
+- ✅ Install any new dependencies  
+- ✅ Rebuild the project
+- ✅ Stop any running MCP servers
+- ✅ Start a new MCP server
+- ✅ Display server information and logs
+- ✅ Prompt you to restart your IDE
+
+**Note**: The script will handle uncommitted changes by offering to stash them before updating.
+
 ## MCP Server Configuration
 
 ### What is MCP?
@@ -95,7 +132,7 @@ Environment variables are configured directly in the MCP configuration within Cu
 
 #### 2. MCP Configuration File
 
-Create an `mcp.json` file in your project root or user directory:
+Run the installation script to generate the configuration, or manually create an `mcp.json` file in your project root or user directory:
 
 ```json
 {
