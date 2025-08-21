@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server that provides tools for interacting with J
 
 - Search Jira issues using JQL (Jira Query Language)
 - Get detailed information about specific issues
-- Update existing issues
+- **🚀 Enhanced Unified Issue Updates** with comprehensive field type support
 - Add comments to issues (with automatic markdown-to-HTML conversion)
 - Add comments to Bitbucket pull requests (with markdown support)
 - **⭐ Get pull requests for Jira issues** (Primary tool: `get_pull_requests_for_issue`)
@@ -192,6 +192,60 @@ Run the installation script to generate the configuration, or manually create an
 
 
 
+## 🚀 Enhanced Field Type Support
+
+The MCP server now provides **comprehensive field type support** for updating Jira issues with intelligent formatting and validation.
+
+### **Supported Field Types**
+
+- **Standard Jira Fields**: summary, description, priority, assignee, status, labels, components, fixVersions
+- **Text Fields**: text field, text area, read-only field
+- **Numeric Fields**: number, float
+- **Date/Time Fields**: date picker, datetime
+- **Reference Fields**: user picker, group picker, project, version, URL
+- **Selection Fields**: dropdown, radio buttons, multi-select, checkboxes, cascading select, labels
+
+### **Smart Features**
+
+- **Automatic Field Detection**: Identifies field types from Jira metadata
+- **Intelligent Formatting**: Applies correct API format for each field type
+- **Dropdown Validation**: Validates dropdown values against available options
+- **Non-Custom Field Handling**: Automatically converts non-custom fields to comments
+- **Flexible Input**: Accepts various input formats (string, array, object)
+
+### **Usage Examples**
+
+```javascript
+// Standard fields
+await enhancedJiraUpdate({
+  issueKey: 'PROJ-123',
+  summary: 'Updated summary',
+  priority: 'High',
+  labels: ['urgent', 'bug']
+});
+
+// Custom fields by name
+await enhancedJiraUpdate({
+  issueKey: 'PROJ-123',
+  customFieldsByName: {
+    'DEV - Has Impact & Change been Unit tested?': 'Yes',
+    'Functional Review Comments': 'Review completed'
+  }
+});
+
+// Mixed approach with dry run
+await enhancedJiraUpdate({
+  issueKey: 'PROJ-123',
+  dryRun: true,
+  summary: 'Test summary',
+  customFields: {
+    'customfield_10001': 42
+  }
+});
+```
+
+📖 **For detailed documentation, see [COMPREHENSIVE_FIELD_TYPE_SUPPORT.md](COMPREHENSIVE_FIELD_TYPE_SUPPORT.md)**
+
 ## Available Tools
 
 ### ⭐ Tool Prioritization
@@ -224,9 +278,98 @@ Run the installation script to generate the configuration, or manually create an
 **Cache Management:**
 11. `reset_mcp_server_cache` - Reset MCP server cache (clear all caches and get statistics)
 
-**Total Tools: 11**
+**Custom Field Management:**
+12. `get_custom_field_mappings` - Get all custom field mappings with caching
+13. `get_custom_field_by_name` - Find a custom field by name (case-insensitive search)
+14. `get_custom_field_by_id` - Get custom field information by its ID
+15. `list_custom_fields` - List all custom fields with their names and types
+16. `clear_custom_field_cache` - Clear the custom field mapping cache
 
+**Unified Update Function (NEW):**
+17. `unified_jira_update` - Comprehensive update function that combines all update methods with dropdown validation
 
+**Dropdown Field Management:**
+18. `get_dropdown_field_options` - Get available options for a dropdown custom field
+19. `validate_dropdown_value` - Validate if a value is valid for a dropdown field
+20. `update_dropdown_field` - Update a dropdown custom field with proper validation
+21. `get_field_info` - Get detailed information about a custom field including type and options
+
+**Total Tools: 21**
+
+## Unified Update Function
+
+The `unified_jira_update` function provides a comprehensive way to update Jira issues with enhanced features:
+
+### Key Features:
+- **Multiple Update Methods**: Combines standard field updates, custom field updates by ID, and custom field updates by name
+- **Dropdown Validation**: Automatically validates dropdown field values and provides suggestions
+- **Smart Field Resolution**: Resolves custom field names to IDs automatically
+- **Comprehensive Documentation**: Adds detailed comments documenting all changes
+- **Error Handling**: Provides clear error messages with suggestions for invalid values
+
+### Usage Examples:
+
+```json
+{
+  "issueKey": "NFD-38469",
+  "fields": {
+    "summary": "Updated summary",
+    "priority": "High"
+  },
+  "customFields": {
+    "customfield_10405": "N/A"
+  },
+  "customFieldsByName": {
+    "DEV - Has Impact & Change been Unit tested?": "N/A"
+  },
+  "validateDropdowns": true,
+  "addComment": true
+}
+```
+
+### Parameters:
+- `issueKey` (required): The Jira issue key
+- `fields` (optional): Standard Jira fields (summary, description, priority, etc.)
+- `customFields` (optional): Custom fields by field ID
+- `customFieldsByName` (optional): Custom fields by field name (automatically resolved to IDs)
+- `validateDropdowns` (optional, default: true): Validate dropdown values
+- `addComment` (optional, default: true): Add documentation comment
+
+## Enhanced Custom Field Cache
+
+The custom field cache now includes comprehensive information:
+
+### Cache Information Includes:
+- **Field Name**: Human-readable field name
+- **Field ID**: Technical field identifier (e.g., customfield_10405)
+- **Field Type**: Technical field type information
+- **Dropdown Detection**: Automatically identifies dropdown fields
+- **Dropdown Options**: For dropdown fields, stores all available options with IDs and values
+- **Multi-value Support**: Identifies fields that support multiple values
+
+### Dropdown Field Support
+
+The server now includes specialized support for dropdown custom fields with:
+
+- **Automatic option discovery** - Gets available dropdown options from Jira
+- **Value validation** - Validates values against available options before updating
+- **Error handling** - Comprehensive error messages for invalid values
+- **Field metadata** - Detailed field information including type and properties
+
+### Quick Example
+
+```javascript
+// Get dropdown options
+const options = await getDropdownFieldOptions("customfield_10405");
+
+// Validate a value
+const validation = await validateDropdownValue("customfield_10405", "N/A");
+
+// Update the field
+const result = await updateDropdownField("NFD-38469", "customfield_10405", "N/A");
+```
+
+For detailed documentation, see **[Dropdown Field Support](./DROPDOWN_FIELD_SUPPORT.md)**.
 
 ## Documentation
 

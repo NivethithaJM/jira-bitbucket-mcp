@@ -11,14 +11,22 @@ import {
   searchIssues,
   getIssue,
   summarizeJiraTicket,
-  updateIssue,
   addComment,
-  updateIssueFields,
   getBitbucketRepositories,
   getPullRequestsForIssue,
   getPrDiff,
   addBitbucketComment,
-  resetMcpServerCache
+  resetMcpServerCache,
+  // Enhanced unified update function (replaces all other update functions)
+  enhancedJiraUpdate,
+  unifiedJiraUpdate,
+  // Custom field management tools
+  getCustomFieldMappings,
+  getCustomFieldByName,
+  getCustomFieldById,
+  listCustomFields,
+  clearCustomFieldCache,
+
 } from './tools/index.js';
 
 // Create MCP server
@@ -82,18 +90,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 
 
-      case 'update_issue':
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(await updateIssue(args.issueKey as string, args.fields as any), null, 2),
-            },
-          ],
-        };
-
-
-
       case 'add_comment':
         return {
           content: [
@@ -104,23 +100,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           ],
         };
 
-      case 'update_issue_fields':
+      case 'enhanced_jira_update':
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(await updateIssueFields(
-                args.issueKey as string,
-                args.summary as string,
-                args.description as string,
-                args.priority as string,
-                args.assignee as string,
-                args.status as string,
-                args.labels as string[],
-                args.components as string[],
-                args.fixVersions as string[],
-                args.customFields as any
-              ), null, 2),
+              text: JSON.stringify(await enhancedJiraUpdate(args as any), null, 2),
             },
           ],
         };
@@ -184,6 +169,69 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
+
+      case 'unified_jira_update':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await unifiedJiraUpdate(args as any), null, 2),
+            },
+          ],
+        };
+
+      // Custom field management tools
+      case 'get_custom_field_mappings':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await getCustomFieldMappings(), null, 2),
+            },
+          ],
+        };
+
+      case 'get_custom_field_by_name':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await getCustomFieldByName(args.fieldName as string), null, 2),
+            },
+          ],
+        };
+
+      case 'get_custom_field_by_id':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await getCustomFieldById(args.fieldId as string), null, 2),
+            },
+          ],
+        };
+
+      case 'list_custom_fields':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await listCustomFields(), null, 2),
+            },
+          ],
+        };
+
+      case 'clear_custom_field_cache':
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(await clearCustomFieldCache(), null, 2),
+            },
+          ],
+        };
+
+
 
       default:
         throw new Error(`Unknown tool: ${name}`);
