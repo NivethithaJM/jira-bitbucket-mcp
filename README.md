@@ -56,8 +56,7 @@ This script will:
 - Install any new dependencies
 - Rebuild the project
 - Stop any running MCP servers
-- Start a new MCP server
-- Ask you to restart your IDE
+- Ask you to restart your IDE (MCP server will start automatically)
 
 ### 📋 Manual Setup
 
@@ -105,9 +104,8 @@ This script will automatically:
 - ✅ Install any new dependencies  
 - ✅ Rebuild the project
 - ✅ Stop any running MCP servers
-- ✅ Start a new MCP server
-- ✅ Display server information and logs
-- ✅ Prompt you to restart your IDE
+- ✅ Display update information
+- ✅ Prompt you to restart your IDE (MCP server will start automatically)
 
 **Note**: The script will handle uncommitted changes by offering to stash them before updating.
 

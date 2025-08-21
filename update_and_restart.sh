@@ -143,45 +143,28 @@ stop_mcp_servers() {
     fi
 }
 
-# Start new MCP server
-start_mcp_server() {
-    print_status "Starting new MCP server..."
-    
-    # Start the server in the background
-    nohup node dist/index.js > mcp-server.log 2>&1 &
-    SERVER_PID=$!
-    
-    # Wait a moment for the server to start
-    sleep 3
-    
-    # Check if the server is running
-    if ps -p $SERVER_PID > /dev/null; then
-        print_success "MCP server started successfully (PID: $SERVER_PID)"
-        print_status "Server logs are being written to mcp-server.log"
-    else
-        print_error "Failed to start MCP server"
-        print_status "Check mcp-server.log for error details"
-        exit 1
-    fi
+# Note: MCP server will be started by IDE when restarted
+note_mcp_startup() {
+    print_status "MCP server startup information..."
+    print_status "The MCP server will be started automatically when you restart your IDE"
+    print_status "No manual server startup is needed"
+    SERVER_PID=""
 }
 
-# Display server information
-show_server_info() {
+# Display update information
+show_update_info() {
     echo ""
-    print_status "📋 Server Information:"
+    print_status "📋 Update Information:"
     echo "========================"
-    echo "Server PID: $SERVER_PID"
-    echo "Log file: mcp-server.log"
     echo "Project path: $(pwd)"
+    echo "Build status: ✅ Completed successfully"
+    echo "MCP servers: ✅ Stopped successfully"
     echo ""
-    
-    # Show recent log entries
-    if [ -f "mcp-server.log" ]; then
-        print_status "Recent server logs:"
-        echo "-------------------"
-        tail -10 mcp-server.log
-        echo ""
-    fi
+    print_status "Next steps:"
+    echo "1. Restart your IDE (Cursor)"
+    echo "2. The MCP server will start automatically with your configuration"
+    echo "3. Test the connection by asking your AI assistant"
+    echo ""
 }
 
 # Ask user to restart IDE
@@ -194,18 +177,19 @@ ask_restart_ide() {
     echo ""
     echo "1. Close Cursor completely"
     echo "2. Reopen Cursor"
-    echo "3. The updated MCP server will be available in your AI assistant"
+    echo "3. The MCP server will start automatically with your existing configuration"
     echo ""
     echo "You can test the connection by asking:"
     echo "   - 'Search for Jira issues in project PROJ'"
     echo "   - 'List Bitbucket repositories'"
     echo ""
-    print_success "Update and restart process completed successfully!"
+    print_success "Update process completed successfully!"
+    print_status "The MCP server will be ready after IDE restart"
 }
 
 # Main update process
 main() {
-    echo "Starting update and restart process..."
+    echo "Starting update process..."
     echo ""
     
     check_git_repo
@@ -214,8 +198,8 @@ main() {
     install_dependencies
     build_project
     stop_mcp_servers
-    start_mcp_server
-    show_server_info
+    note_mcp_startup
+    show_update_info
     ask_restart_ide
 }
 
