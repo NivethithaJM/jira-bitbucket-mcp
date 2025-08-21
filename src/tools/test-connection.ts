@@ -1,5 +1,5 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
-import { BITBUCKET_WORKSPACE, BITBUCKET_API_KEY } from '../utils/clients.js';
+import { BITBUCKET_WORKSPACE, BITBUCKET_API_TOKEN } from '../utils/clients.js';
 import { getBitbucketRepositories } from './bitbucket-repositories.js';
 
 export const testBitbucketConnectionToolDefinition: Tool = {
@@ -27,8 +27,8 @@ export async function testBitbucketConnection(maxResults: number = 10) {
       repositories: response.values || [],
       configuration: {
         workspace: BITBUCKET_WORKSPACE,
-        apiKeyConfigured: !!BITBUCKET_API_KEY,
-        apiKeyLength: BITBUCKET_API_KEY?.length || 0
+        apiKeyConfigured: !!BITBUCKET_API_TOKEN,
+        apiKeyLength: BITBUCKET_API_TOKEN?.length || 0
       }
     };
   } catch (error) {
@@ -38,8 +38,8 @@ export async function testBitbucketConnection(maxResults: number = 10) {
       error: error instanceof Error ? error.message : String(error),
       configuration: {
         workspace: BITBUCKET_WORKSPACE,
-        apiKeyConfigured: !!BITBUCKET_API_KEY,
-        apiKeyLength: BITBUCKET_API_KEY?.length || 0
+        apiKeyConfigured: !!BITBUCKET_API_TOKEN,
+        apiKeyLength: BITBUCKET_API_TOKEN?.length || 0
       }
     };
   }

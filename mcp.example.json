@@ -6,9 +6,9 @@
       "env": {
         "JIRA_BASE_URL": "https://your-domain.atlassian.net",
         "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_API_TOKEN": "your-api-token-here",
+        "JIRA_API_TOKEN": "your-jira-api-token",
         "BITBUCKET_WORKSPACE": "your-workspace-name",
-        "BITBUCKET_API_KEY": "your-bitbucket-api-key"
+        "BITBUCKET_API_TOKEN": "your-bitbucket-api-token"
       }
     }
   }

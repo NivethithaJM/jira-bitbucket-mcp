@@ -24,6 +24,25 @@ A Model Context Protocol (MCP) server that provides tools for interacting with J
 
 ## Setup
 
+### 🚀 One-Click Installation
+
+**For macOS/Linux:**
+```bash
+git clone https://github.com/NivethithaJM/jira-bitbucket-mcp.git
+cd jira-bitbucket-mcp
+chmod +x install.sh
+./install.sh
+```
+
+**For Windows:**
+```cmd
+git clone https://github.com/NivethithaJM/jira-bitbucket-mcp.git
+cd jira-bitbucket-mcp
+install.bat
+```
+
+### 📋 Manual Setup
+
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/NivethithaJM/jira-bitbucket-mcp.git
@@ -35,7 +54,7 @@ A Model Context Protocol (MCP) server that provides tools for interacting with J
    npm install
    ```
 
-2. **Generate API Tokens:**
+3. **Generate API Tokens:**
    - Go to [Atlassian Account Settings](https://id.atlassian.com/manage-profile/security/api-tokens)
    - **For Jira**: Click "Create API token"
      - Name: "Jira MCP Server"
@@ -48,9 +67,9 @@ A Model Context Protocol (MCP) server that provides tools for interacting with J
      - Expires: 1 year  
      - App: Bitbucket
      - Scopes: All scopes except delete actions
-     - Generate and copy the token as `BITBUCKET_API_KEY`
+     - Generate and copy the token as `BITBUCKET_API_TOKEN`
 
-3. **Build the project:**
+4. **Build the project:**
    ```bash
    npm run build
    ```
@@ -72,7 +91,7 @@ Environment variables are configured directly in the MCP configuration within Cu
 - `JIRA_EMAIL` - Your Jira Cloud email address  
 - `JIRA_API_TOKEN` - Your Jira Cloud API token
 - `BITBUCKET_WORKSPACE` - Your Bitbucket workspace name
-- `BITBUCKET_API_KEY` - Your Bitbucket API key
+- `BITBUCKET_API_TOKEN` - Your Bitbucket API token
 
 #### 2. MCP Configuration File
 
@@ -87,9 +106,9 @@ Create an `mcp.json` file in your project root or user directory:
       "env": {
         "JIRA_BASE_URL": "https://your-domain.atlassian.net",
         "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_API_TOKEN": "your-api-token-here",
+        "JIRA_API_TOKEN": "your-jira-api-token",
         "BITBUCKET_WORKSPACE": "your-workspace-name",
-        "BITBUCKET_API_KEY": "your-bitbucket-api-key"
+        "BITBUCKET_API_TOKEN": "your-bitbucket-api-token"
       }
     }
   }

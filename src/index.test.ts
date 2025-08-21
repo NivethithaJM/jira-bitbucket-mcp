@@ -55,7 +55,7 @@ describe('Jira MCP Server', () => {
 
     const optionalEnvVars = [
       'BITBUCKET_WORKSPACE',
-      'BITBUCKET_API_KEY'
+      'BITBUCKET_API_TOKEN'
     ];
 
     expect(requiredEnvVars).toHaveLength(3);
@@ -65,7 +65,7 @@ describe('Jira MCP Server', () => {
 
     expect(optionalEnvVars).toHaveLength(2);
     expect(optionalEnvVars).toContain('BITBUCKET_WORKSPACE');
-    expect(optionalEnvVars).toContain('BITBUCKET_API_KEY');
+    expect(optionalEnvVars).toContain('BITBUCKET_API_TOKEN');
   });
 
   it('should handle JQL search queries', () => {
