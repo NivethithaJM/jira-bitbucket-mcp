@@ -210,6 +210,8 @@ Run the installation script to generate the configuration, or manually create an
 - **Primary Tool**: `get_issue` - Get basic issue details
 - **Advanced**: `summarize_jira_ticket` - Get comprehensive analysis with comments, custom fields, etc.
 
+
+
 ### 📋 Complete Tool List
 
 **Core Jira Tools:**
@@ -286,6 +288,10 @@ The `enhanced_jira_update` function provides comprehensive field type support fo
 - `allowPartialUpdates` (optional, default: false): Continue with valid fields if some fail
 
 📖 **For comprehensive implementation details and field type mappings, see [COMPREHENSIVE_FIELD_TYPE_SUPPORT.md](COMPREHENSIVE_FIELD_TYPE_SUPPORT.md)**
+
+
+
+📖 **For comprehensive field type support details, see [COMPREHENSIVE_FIELD_TYPE_SUPPORT.md](COMPREHENSIVE_FIELD_TYPE_SUPPORT.md)**
 
 ## Enhanced Custom Field Cache
 

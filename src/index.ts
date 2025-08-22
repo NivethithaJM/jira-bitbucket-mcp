@@ -26,7 +26,6 @@ import {
   getCustomFieldById,
   listCustomFields,
   clearCustomFieldCache,
-
 } from './tools/index.js';
 
 // Create MCP server
@@ -230,8 +229,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
-
-
 
       default:
         throw new Error(`Unknown tool: ${name}`);
